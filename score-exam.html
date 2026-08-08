@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Physics Coolnut Lesson — Free Falling Score Exam 5 คะแนน 10 นาที" />
+  <title>Free Falling | Score Exam</title>
+  
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="exam.css" />
+</head>
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Dancing Cat Full Score Overlay -->
+  <div id="catOverlay" class="cat-overlay" aria-hidden="true">
+    <img src="dancing-cat-dance.gif" alt="Dancing Cat Congrats" class="cat-gif" />
+  </div>
+
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-mark">P</div>
+        <div>Free Falling · Score Exam</div>
+      </a>
+      <div class="top-actions">
+        <button class="theme-toggle" aria-label="Toggle Theme" title="สลับ Dark/Light Mode">🌙</button>
+        <div class="timer" id="timer">10:00</div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="intro">
+      <div class="wrap">
+        <div class="hero-card">
+          <div class="eyebrow">Physics Coolnut Lesson</div>
+          <h1>Free Falling Exam</h1>
+          <p class="muted" style="margin:0">ข้อสอบสั้น 2 ข้อ รวม 5 คะแนน โดยตรวจค่าตัวเลข เครื่องหมาย และหน่วยตามที่กำหนด</p>
+          <div class="rules">
+            <div class="rule"><b>2 ข้อ</b><span class="muted">จำนวนข้อ</span></div>
+            <div class="rule"><b>5 คะแนน</b><span class="muted">คะแนนเต็ม</span></div>
+            <div class="rule"><b>10 นาที</b><span class="muted">จับเวลา</span></div>
+            <div class="rule"><b>g = −9.8</b><span class="muted">m/s²</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="start" id="startPanel">
+      <div class="wrap">
+        <div class="card">
+          <h2>ข้อมูลผู้เข้าสอบ</h2>
+          <div class="form-grid">
+            <div class="field">
+              <label for="studentName">ชื่อ–นามสกุล</label>
+              <input id="studentName" autocomplete="name" placeholder="กรอกชื่อ–นามสกุล" />
+            </div>
+            <div class="field">
+              <label for="studentClass">ชั้น</label>
+              <input id="studentClass" placeholder="เช่น ม.4/1" />
+            </div>
+            <div class="field">
+              <label for="studentNo">เลขที่</label>
+              <input id="studentNo" type="number" min="1" max="99" placeholder="1–99" />
+            </div>
+          </div>
+          <div class="notice">
+            <b>ก่อนเริ่ม:</b> กำหนดให้แกน <b>+y ชี้ขึ้น</b> ดังนั้น <b>g = −9.8 m/s²</b> และข้อ 1 ต้องตอบ
+            <b>เครื่องหมาย +/− + ค่าตัวเลข + หน่วย</b> ให้ครบ
+          </div>
+          <div id="startError" class="error"></div>
+          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="startExam">เริ่มสอบ 10 นาที</button>
+            <a class="btn btn-outline" href="index.html">กลับไปทบทวน</a>
+          </div>
+        </div>
+
+        <!-- Score History Section -->
+        <div class="card history-section">
+          <h3>📜 ประวัติการสอบล่าสุด (บันทึกในเครื่องนี้)</h3>
+          <div id="historyTableContainer">
+            <p class="muted">กำลังโหลดประวัติ...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="exam-shell" id="examPanel">
+      <div class="wrap">
+        <div class="meta">
+          <span class="chip" id="metaName"></span>
+          <span class="chip" id="metaClass"></span>
+          <span class="chip" id="metaNo"></span>
+        </div>
+
+        <div class="card">
+          <div class="qnum">ข้อ 1 · 2.00 คะแนน</div>
+          <div class="question-title" id="examQ1Text"></div>
+          <span class="equation-note">ตอบพร้อมเครื่องหมาย ค่าตัวเลข และหน่วย</span>
+
+          <div class="answer-grid">
+            <div class="field">
+              <label for="examQ1Sign">เครื่องหมาย</label>
+              <select id="examQ1Sign">
+                <option value="">เลือก</option>
+                <option value="+">+</option>
+                <option value="-">−</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="examQ1Value">ค่าตัวเลข (ขนาด)</label>
+              <input id="examQ1Value" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+            </div>
+            <div class="field">
+              <label for="examQ1Unit">หน่วย</label>
+              <select id="examQ1Unit">
+                <option value="">เลือกหน่วย</option>
+                <option value="m">m</option>
+                <option value="m/s">m/s</option>
+                <option value="s">s</option>
+                <option value="m/s2">m/s²</option>
+              </select>
+            </div>
+          </div>
+          <p class="muted" style="margin-bottom:0">การให้คะแนน: ค่าตัวเลข 1.00 · เครื่องหมาย 0.50 · หน่วย 0.50</p>
+        </div>
+
+        <div class="card">
+          <div class="qnum">ข้อ 2 · 3.00 คะแนน</div>
+          <div class="question-title" id="examQ2Text"></div>
+          <span class="equation-note">ที่จุดสูงสุด vᵧ = 0 m/s</span>
+
+          <div class="divider"></div>
+
+          <b>2.1 เวลาที่วัตถุขึ้นถึงจุดสูงสุด (1.50 คะแนน)</b>
+          <div class="answer-grid two">
+            <div class="field">
+              <label for="examQ2Time">คำตอบ</label>
+              <input id="examQ2Time" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+            </div>
+            <div class="field">
+              <label for="examQ2TimeUnit">หน่วย</label>
+              <select id="examQ2TimeUnit">
+                <option value="">เลือกหน่วย</option>
+                <option value="s">s</option>
+                <option value="m">m</option>
+                <option value="m/s">m/s</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <b>2.2 ความสูงสูงสุดจากจุดปล่อย (1.50 คะแนน)</b>
+          <div class="answer-grid two">
+            <div class="field">
+              <label for="examQ2Height">คำตอบ</label>
+              <input id="examQ2Height" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+            </div>
+            <div class="field">
+              <label for="examQ2HeightUnit">หน่วย</label>
+              <select id="examQ2HeightUnit">
+                <option value="">เลือกหน่วย</option>
+                <option value="m">m</option>
+                <option value="s">s</option>
+                <option value="m/s">m/s</option>
+              </select>
+            </div>
+          </div>
+          <p class="muted" style="margin-bottom:0">แต่ละข้อย่อย: ค่าตัวเลข 1.00 · หน่วย 0.50</p>
+        </div>
+
+        <div class="submitbar">
+          <div>
+            <b>ตรวจคำตอบให้ครบก่อนส่ง <span class="progress-pill" id="progressPill">0/7 ช่อง</span></b>
+            <div class="muted">เมื่อหมดเวลา ระบบจะส่งอัตโนมัติ</div>
+            <div id="submitError" class="error"></div>
+          </div>
+          <button class="btn btn-primary" id="submitExam">ส่งข้อสอบ</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="result" id="resultPanel">
+      <div class="wrap">
+        <div class="score-hero">
+          <div class="eyebrow" style="color:#a9c6ff">Exam Result</div>
+          <div class="score-number"><span id="finalScore">0.00</span><small> / 5.00</small></div>
+          <div id="resultStudent" style="margin-top:8px;color:rgba(255,255,255,.8)"></div>
+          <div class="breakdown">
+            <div class="break"><b id="breakQ1">0.00 / 2.00</b><span>ข้อ 1</span></div>
+            <div class="break"><b id="breakQ21">0.00 / 1.50</b><span>ข้อ 2.1</span></div>
+            <div class="break"><b id="breakQ22">0.00 / 1.50</b><span>ข้อ 2.2</span></div>
+          </div>
+        </div>
+
+        <div class="detail-grid">
+          <div class="card">
+            <h3>ข้อ 1 · Random Equation</h3>
+            <div id="resultQ1"></div>
+            <div class="solution" id="solutionQ1"></div>
+          </div>
+          <div class="card">
+            <h3>ข้อ 2 · Highest Point</h3>
+            <div id="resultQ2"></div>
+            <div class="solution" id="solutionQ2"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary" id="retakeExam">🔄 สอบใหม่อีกครั้ง</button>
+          <button class="btn btn-outline" id="printResult">🖨️ พิมพ์ผลสอบ</button>
+          <a class="btn btn-outline" href="index.html">กลับไปทบทวน</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    Physics Coolnut Lesson · Free Falling · 5-point score exam
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="exam.js"></script>
+</body>
+</html>

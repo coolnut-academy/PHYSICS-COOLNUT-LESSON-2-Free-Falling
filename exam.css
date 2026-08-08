@@ -1,0 +1,362 @@
+/* Physics Coolnut Lesson — score-exam.html styles */
+
+.timer {
+  min-width: 118px;
+  text-align: center;
+  padding: 9px 16px;
+  border-radius: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  font-weight: 900;
+  font-size: 1.14rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  transition: all 0.3s ease;
+}
+
+.timer.danger {
+  color: var(--red);
+  background: var(--red-soft);
+  border-color: var(--red-border);
+  animation: pulseDanger 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseDanger {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { transform: scale(1.04); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.hero {
+  padding: 48px 0 18px;
+}
+
+.hero-card {
+  padding: 30px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.rules {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.rule {
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  padding: 13px;
+  background: var(--paper);
+  text-align: center;
+}
+
+.rule b {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+.start {
+  padding: 22px 0 70px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr .55fr;
+  gap: 12px;
+}
+
+.notice {
+  padding: 15px 17px;
+  border-radius: 15px;
+  background: var(--yellow-soft);
+  border: 1px solid var(--yellow-border);
+  margin-top: 16px;
+  color: var(--ink);
+}
+
+.exam-shell {
+  display: none;
+  padding: 22px 0 70px;
+}
+
+.exam-shell.show {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.chip {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: .86rem;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.qnum {
+  font-size: .8rem;
+  font-weight: 900;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.question-title {
+  font-size: 1.08rem;
+  font-weight: 800;
+  margin: 6px 0 10px;
+  color: var(--ink);
+}
+
+.equation-note {
+  display: inline-block;
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-weight: 800;
+  font-size: .9rem;
+  border: 1px solid var(--blue-border);
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: 120px minmax(180px, 1fr) 160px;
+  gap: 10px;
+  align-items: flex-end;
+  margin-top: 16px;
+}
+
+.answer-grid.two {
+  grid-template-columns: minmax(180px, 1fr) 160px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 22px 0;
+}
+
+/* Submit bar with progress indicator */
+.submitbar {
+  position: sticky;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  margin-top: 18px;
+  padding: 16px 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper-translucent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  z-index: 20;
+}
+
+.progress-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-left: 8px;
+}
+
+.result {
+  display: none;
+  padding: 24px 0 70px;
+}
+
+.result.show {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+.score-hero {
+  padding: 34px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #162a47, #244d7a);
+  color: #fff;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .score-hero {
+  background: linear-gradient(135deg, #0f1c2e, #1d4ed8);
+}
+
+.score-number {
+  font-size: clamp(3.2rem, 8vw, 5.7rem);
+  font-weight: 950;
+  line-height: 1;
+}
+
+.score-number small {
+  font-size: .28em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.breakdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.break {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 15px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.break b {
+  display: block;
+  font-size: 1.2rem;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.status {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 900;
+}
+
+.ok {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.no {
+  color: var(--red);
+  background: var(--red-soft);
+}
+
+/* History Section */
+.history-section {
+  margin-top: 30px;
+}
+
+#historyTableContainer {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 12px;
+  border-radius: 12px;
+}
+
+.history-table {
+  width: 100%;
+  min-width: 540px; /* Ensures readable columns on narrow mobile screens */
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.history-table th, .history-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.history-table th {
+  font-weight: 800;
+  color: var(--muted);
+  background: var(--blue-soft);
+}
+
+/* Canvas Confetti overlay */
+#confettiCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Dancing Cat Full Score Overlay */
+.cat-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.cat-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.cat-gif {
+  width: min(280px, 60vw);
+  max-height: 48vh;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.4));
+  animation: popCat 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popCat {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media(max-width:760px) {
+  .rules {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .form-grid, .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .answer-grid, .answer-grid.two {
+    grid-template-columns: 1fr;
+  }
+  .submitbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .submitbar .btn {
+    width: 100%;
+  }
+  .breakdown {
+    grid-template-columns: 1fr;
+  }
+}

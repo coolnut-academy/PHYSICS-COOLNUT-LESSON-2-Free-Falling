@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Physics Coolnut Lesson — Free Falling: เรียน ทบทวน และฝึกโจทย์การตกอย่างเสรี" />
+  <title>Physics Coolnut Lesson | Free Falling</title>
+  
+  <!-- KaTeX for crisp LaTeX Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-mark">P</div>
+        <div>Physics Coolnut Lesson<small>Free Falling</small></div>
+      </a>
+      <div class="top-actions">
+        <button class="theme-toggle" aria-label="Toggle Theme" title="สลับ Dark/Light Mode">🌙</button>
+        <a class="btn btn-outline hide-mobile" href="#practice">ฝึกโจทย์</a>
+        <a class="btn btn-primary" href="score-exam.html">สอบ 5 คะแนน</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero reveal-on-scroll">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Mini Lesson · Free Falling</div>
+          <h1>ตกอย่างเสรี<br>แต่คิดเครื่องหมายให้แม่น</h1>
+          <p class="lead">
+            บทสั้นสำหรับทบทวนการเคลื่อนที่ในแนวดิ่งใกล้ผิวโลก โดยกำหนดให้แกน <b>+y ชี้ขึ้น</b>
+            และใช้ความเร่งเนื่องจากแรงโน้มถ่วง <b>g = −9.8 m/s²</b>
+          </p>
+        </div>
+        <aside class="hero-card">
+          <h3>กติกาแกนของบทนี้</h3>
+          <div class="hero-g">+y ↑ &nbsp; | &nbsp; g = −9.8 m/s²</div>
+          <div class="axis">
+            <div class="axis-row"><span>โยนขึ้น / กำลังขึ้น</span><b>+</b></div>
+            <div class="axis-row"><span>ตกลง / กำลังลง</span><b>−</b></div>
+            <div class="axis-row"><span>ปล่อยจากหยุดนิ่ง</span><b>u<sub>y</sub> = 0</b></div>
+            <div class="axis-row"><span>จุดสูงสุด</span><b>v<sub>y</sub> = 0</b></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section reveal-on-scroll">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="pill">Core equation set</span>
+            <h2>4 สมการที่ใช้ในบทนี้</h2>
+            <p>ทุกข้อในแบบฝึกและข้อสอบออกแบบให้อยู่ภายในชุดสมการนี้</p>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="formula">
+            <span class="tag">สมการ 1</span>
+            <div class="eq">$$S_y = u_y t + \frac{1}{2}gt^2$$</div>
+            <small>เมื่อรู้ u<sub>y</sub> และ t</small>
+          </div>
+          <div class="formula">
+            <span class="tag">สมการ 2</span>
+            <div class="eq">$$S_y = v_y t - \frac{1}{2}gt^2$$</div>
+            <small>เมื่อรู้ v<sub>y</sub> และ t</small>
+          </div>
+          <div class="formula">
+            <span class="tag">สมการ 3</span>
+            <div class="eq">$$v_y = u_y + gt$$</div>
+            <small>เชื่อมความเร็วกับเวลา</small>
+          </div>
+          <div class="formula">
+            <span class="tag">สมการ 4</span>
+            <div class="eq">$$v_y^2 = u_y^2 + 2gS_y$$</div>
+            <small>ไม่มีตัวแปรเวลา</small>
+          </div>
+        </div>
+
+        <div class="callout">
+          <div>⚠️</div>
+          <div>
+            <strong>บทนี้ตรวจ “เครื่องหมาย” และ “หน่วย” ด้วย</strong>
+            ถ้าคำนวณขนาดถูกแต่ใส่เครื่องหมายผิด แปลว่ายังตีความทิศทางไม่ถูกต้อง
+            ส่วนเวลา ระยะทาง และความสูงเป็นปริมาณบวก แต่การกระจัดและความเร็วแกน y อาจเป็นบวกหรือลบได้
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal-on-scroll" id="practice">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="pill">แบบฝึกหัดทบทวน</span>
+            <h2>กำหนดเลขที่ และ ฝึกทำโจทย์</h2>
+            <p>ระบบสร้างโจทย์เฉพาะตัวตามเลขที่นักเรียน (1–99) โดยซิงค์ตรงกันทุกแบบฝึกหัด</p>
+          </div>
+        </div>
+
+        <!-- Synchronized Student Control Bar -->
+        <div class="student-row">
+          <div class="field">
+            <label for="studentNoGlobal">เลขที่นักเรียน (1–99)</label>
+            <input id="studentNoGlobal" type="number" min="1" max="99" value="1" placeholder="กรอกเลขที่ 1–99" />
+          </div>
+          <div style="font-size: 0.9rem; color: var(--muted); max-width: 500px;">
+            💡 เลขที่ของคุณจะถูกนำไปเป็นตัวแปรสร้างค่าโจทย์ในแบบฝึกหัดและข้อสอบจริง
+          </div>
+        </div>
+
+        <!-- Part 1 -->
+        <div style="margin-top: 24px;" class="section-head">
+          <div>
+            <span class="pill">Part 1 · 2 คะแนนในข้อสอบ</span>
+            <h3 style="margin: 4px 0 0; font-size: 1.4rem;">Random Free Falling Equation</h3>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="card">
+            <h3>วิธีคิดก่อนแทนค่า</h3>
+            <p class="muted">อย่าเริ่มจากเลือกสูตรทันที ให้กำหนดแกนและเครื่องหมายก่อนเสมอ</p>
+            <ol>
+              <li>กำหนด <b>+y ขึ้น</b> ⇒ g = −9.8 m/s²</li>
+              <li>ถอดข้อมูลจากโจทย์เป็น u<sub>y</sub>, v<sub>y</sub>, S<sub>y</sub>, t</li>
+              <li>เลือกสมการที่ใช้ข้อมูลเท่าที่โจทย์ให้</li>
+              <li>คำนวณขนาด แล้วตรวจว่าเครื่องหมายสุดท้ายตรงกับสถานการณ์หรือไม่</li>
+              <li>ตอบพร้อมหน่วย</li>
+            </ol>
+            <div class="score-preview">
+              <div class="score-box"><b>1.00</b><span class="muted">ค่าตัวเลข</span></div>
+              <div class="score-box"><b>0.50</b><span class="muted">เครื่องหมาย</span></div>
+              <div class="score-box"><b>0.50</b><span class="muted">หน่วย</span></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h3>ฝึกแบบเดียวกับข้อสอบ</h3>
+              <button class="btn btn-blue" id="newQ1">สุ่มโจทย์ใหม่</button>
+            </div>
+
+            <div class="question" id="q1Box">
+              <div class="question-top">
+                <div>
+                  <div class="q-label" id="q1Family">Equation Family</div>
+                  <h4 id="q1Text">กำลังสร้างโจทย์...</h4>
+                </div>
+              </div>
+
+              <div class="answer-grid">
+                <div class="field">
+                  <label for="q1Sign">เครื่องหมาย</label>
+                  <select id="q1Sign">
+                    <option value="">เลือก</option>
+                    <option value="+">+</option>
+                    <option value="-">−</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="q1Value">ค่าตัวเลข (ขนาด)</label>
+                  <input id="q1Value" type="number" min="0" step="0.01" placeholder="เช่น 24.50" />
+                </div>
+                <div class="field">
+                  <label for="q1Unit">หน่วย</label>
+                  <select id="q1Unit">
+                    <option value="">เลือกหน่วย</option>
+                    <option value="m">m</option>
+                    <option value="m/s">m/s</option>
+                    <option value="s">s</option>
+                    <option value="m/s2">m/s²</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="checkQ1">ตรวจคำตอบ</button>
+                <button class="btn btn-soft" id="hintQ1">Hint 1/2</button>
+                <button class="btn btn-outline" id="solutionQ1">ดูเฉลย</button>
+              </div>
+              <div class="feedback" id="feedbackQ1"></div>
+              <div class="hint-box" id="hintBoxQ1"></div>
+              <div class="solution" id="solutionBoxQ1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Part 2 -->
+    <section class="section reveal-on-scroll" id="highest">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <span class="pill">Part 2 · 3 คะแนนในข้อสอบ</span>
+            <h2>Highest Point Challenge</h2>
+            <p>โจทย์เดียว หา 2 ตัวแปร: เวลาถึงจุดสูงสุด และความสูงสูงสุด</p>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="highest-visual">
+            <div class="trajectory">
+              <div class="ball"></div>
+            </div>
+            <div class="ground"></div>
+            <div class="vzero">จุดสูงสุด ⇒ v<sub>y</sub> = 0 m/s</div>
+            <p class="muted" style="margin-top: 12px; font-size: 0.9rem;">สิ่งที่ต้องจำไม่ใช่ “สูตรใหม่” แต่คือเงื่อนไขที่จุดสูงสุด</p>
+          </div>
+
+          <div class="card">
+            <h3>ฝึกโจทย์ข้อสุดท้าย</h3>
+            <p class="muted">
+              กำหนดความเร็วต้นตามเลขที่: <b>u<sub>y</sub> = 30 + เลขที่นักเรียน</b> m/s
+            </p>
+
+            <div class="question">
+              <div class="q-label">Highest Point</div>
+              <h4 id="q2Text">โยนวัตถุขึ้นในแนวดิ่ง...</h4>
+
+              <div style="margin-top:16px;font-weight:900; color: var(--ink);">2.1 เวลาที่วัตถุขึ้นถึงจุดสูงสุด</div>
+              <div class="answer-grid two">
+                <div class="field">
+                  <label for="q2Time">คำตอบ</label>
+                  <input id="q2Time" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+                </div>
+                <div class="field">
+                  <label for="q2TimeUnit">หน่วย</label>
+                  <select id="q2TimeUnit">
+                    <option value="">เลือกหน่วย</option>
+                    <option value="s">s</option>
+                    <option value="m">m</option>
+                    <option value="m/s">m/s</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style="margin-top:16px;font-weight:900; color: var(--ink);">2.2 ความสูงสูงสุดจากจุดปล่อย</div>
+              <div class="answer-grid two">
+                <div class="field">
+                  <label for="q2Height">คำตอบ</label>
+                  <input id="q2Height" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+                </div>
+                <div class="field">
+                  <label for="q2HeightUnit">หน่วย</label>
+                  <select id="q2HeightUnit">
+                    <option value="">เลือกหน่วย</option>
+                    <option value="m">m</option>
+                    <option value="s">s</option>
+                    <option value="m/s">m/s</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="actions">
+                <button class="btn btn-primary" id="checkQ2">ตรวจคำตอบ</button>
+                <button class="btn btn-soft" id="hintQ2">Hint 1/2</button>
+                <button class="btn btn-outline" id="solutionQ2">ดูเฉลย</button>
+              </div>
+              <div class="feedback" id="feedbackQ2"></div>
+              <div class="hint-box" id="hintBoxQ2"></div>
+              <div class="solution" id="solutionBoxQ2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap reveal-on-scroll">
+      <section class="exam-cta">
+        <div>
+          <h2>พร้อมแล้วไปสอบเก็บคะแนน</h2>
+          <p>2 ข้อ · 5 คะแนน · 10 นาที · ไม่มี Hint ระหว่างสอบ</p>
+        </div>
+        <a class="btn" style="background:white;color:#183153;" href="score-exam.html">เข้าสู่หน้าสอบ →</a>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    Physics Coolnut Lesson · Free Falling · Modern Physics Web Application
+  </footer>
+
+  <script src="shared.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
