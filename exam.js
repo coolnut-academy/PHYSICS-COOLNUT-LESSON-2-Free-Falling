@@ -11,6 +11,7 @@
     TOL,
     clampStudentNo,
     randomFamily,
+    randomInt,
     fmt,
     signOf,
     signed,
@@ -87,8 +88,8 @@
   }
 
   function renderExam() {
-    const q1 = makeQ1(exam.studentNo, exam.familyId);
-    const q2 = makeQ2(exam.studentNo);
+    const q1 = makeQ1(exam.studentNo, exam.familyId, exam.q1Base);
+    const q2 = makeQ2(exam.studentNo, exam.q2Base);
     exam.q1 = q1;
     exam.q2 = q2;
 
@@ -100,7 +101,7 @@
     $("metaClass").textContent = `ชั้น ${exam.className}`;
     $("metaNo").textContent = `เลขที่ ${exam.studentNo}`;
     $("examQ1Text").textContent = q1.text;
-    $("examQ2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งด้วยความเร็วต้น <b>uᵧ = 30 + ${exam.studentNo} = +${q2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
+    $("examQ2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งด้วยความเร็วต้น <b>uᵧ = ${exam.q2Base} + ${exam.studentNo} = +${q2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
 
     restoreDraft(exam.draft);
     attachDraftListeners();
@@ -138,6 +139,8 @@
       className,
       studentNo,
       familyId: randomFamily(),
+      q1Base: randomInt(1, 99),
+      q2Base: randomInt(1, 99),
       startedAt: now,
       deadline: now + DURATION_MS,
       draft: {}
@@ -298,8 +301,8 @@
     submitted = true;
     if (timerId) clearInterval(timerId);
     const draft = currentDraft();
-    const q1 = makeQ1(exam.studentNo, exam.familyId);
-    const q2 = makeQ2(exam.studentNo);
+    const q1 = makeQ1(exam.studentNo, exam.familyId, exam.q1Base);
+    const q2 = makeQ2(exam.studentNo, exam.q2Base);
     const g1 = gradeQ1(q1, draft);
     const g2 = gradeQ2(q2, draft);
     const total = g1.score + g2.score21 + g2.score22;
@@ -441,6 +444,9 @@
     try {
       const saved = JSON.parse(raw);
       if (!saved || !saved.deadline || !saved.studentNo) return false;
+      if (!Number.isInteger(saved.q2Base) || saved.q2Base < 1 || saved.q2Base > 99) {
+        saved.q2Base = 30;
+      }
       exam = saved;
       renderExam();
       if (Date.now() >= exam.deadline) {

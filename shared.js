@@ -29,6 +29,12 @@
     return pickRandom([1, 2, 3, 4]);
   }
 
+  function randomInt(min, max) {
+    const low = Math.ceil(min);
+    const high = Math.floor(max);
+    return Math.floor(Math.random() * (high - low + 1)) + low;
+  }
+
   function fmt(n) {
     return Number(n).toFixed(2);
   }
@@ -46,17 +52,19 @@
     return u === "m/s2" ? "m/s²" : u;
   }
 
-  function makeQ1(studentNo, familyId) {
+  function makeQ1(studentNo, familyId, baseValue = null) {
     const n = clampStudentNo(studentNo);
+    const hasRandomBase = Number.isInteger(baseValue) && baseValue >= 1 && baseValue <= 99;
 
     if (familyId === 1) {
-      const u = 24 + (n % 8);
+      const u = hasRandomBase ? baseValue + n : 24 + (n % 8);
       const t = 1 + (n % 2);
       const s = u * t + 0.5 * G * t * t;
       return {
         familyId,
+        baseValue: hasRandomBase ? baseValue : null,
         familyName: "สมการ 1 · Sᵧ = uᵧt + ½gt²",
-        text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น +${u.toFixed(0)} m/s หลังจาก ${t} s ลูกบอลมีการกระจัด Sᵧ จากจุดปล่อยเท่าใด?`,
+        text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น ${hasRandomBase ? `uᵧ = ${baseValue} + ${n} = ` : ""}+${u.toFixed(0)} m/s หลังจาก ${t} s ลูกบอลมีการกระจัด Sᵧ จากจุดปล่อยเท่าใด?`,
         answer: s,
         unit: "m",
         target: "Sᵧ",
@@ -67,13 +75,14 @@
     }
 
     if (familyId === 2) {
-      const v = 16 + (n % 8);
+      const v = hasRandomBase ? baseValue + n : 16 + (n % 8);
       const t = 1 + (n % 2);
       const s = v * t - 0.5 * G * t * t;
       return {
         familyId,
+        baseValue: hasRandomBase ? baseValue : null,
         familyName: "สมการ 2 · Sᵧ = vᵧt − ½gt²",
-        text: `วัตถุถูกโยนขึ้นในแนวดิ่ง และเมื่อครบ ${t} s ยังมีความเร็ว +${v.toFixed(0)} m/s จงหาการกระจัด Sᵧ ในช่วงเวลาดังกล่าว`,
+        text: `วัตถุถูกโยนขึ้นในแนวดิ่ง และเมื่อครบ ${t} s ยังมีความเร็ว vᵧ = ${hasRandomBase ? `${baseValue} + ${n} = ` : ""}+${v.toFixed(0)} m/s จงหาการกระจัด Sᵧ ในช่วงเวลาดังกล่าว`,
         answer: s,
         unit: "m",
         target: "Sᵧ",
@@ -84,13 +93,14 @@
     }
 
     if (familyId === 3) {
-      const u = 22 + (n % 8);
+      const u = hasRandomBase ? baseValue + n : 22 + (n % 8);
       const t = 4 + (n % 2);
       const v = u + G * t;
       return {
         familyId,
+        baseValue: hasRandomBase ? baseValue : null,
         familyName: "สมการ 3 · vᵧ = uᵧ + gt",
-        text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น +${u.toFixed(0)} m/s หลังจาก ${t} s ลูกบอลมีความเร็ว vᵧ เท่าใด?`,
+        text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น ${hasRandomBase ? `uᵧ = ${baseValue} + ${n} = ` : ""}+${u.toFixed(0)} m/s หลังจาก ${t} s ลูกบอลมีความเร็ว vᵧ เท่าใด?`,
         answer: v,
         unit: "m/s",
         target: "vᵧ",
@@ -100,30 +110,34 @@
       };
     }
 
-    const u = 30 + (n % 10);
-    const s = 12 + (n % 6);
+    const u = hasRandomBase ? baseValue + n : 30 + (n % 10);
+    const s = hasRandomBase
+      ? Math.max(0.01, Math.floor((u * u / (4 * Math.abs(G))) * 100) / 100)
+      : 12 + (n % 6);
+    const sText = hasRandomBase ? s.toFixed(2) : s.toFixed(0);
     const radicand = u * u + 2 * G * s;
     const vMag = Math.sqrt(radicand);
     const v = -vMag; // กำลังตกกลับลงมา
     return {
       familyId: 4,
+      baseValue: hasRandomBase ? baseValue : null,
       familyName: "สมการ 4 · vᵧ² = uᵧ² + 2gSᵧ",
-      text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น +${u.toFixed(0)} m/s ขณะลูกบอลกำลังตกกลับลงมาและอยู่สูงจากจุดปล่อย ${s.toFixed(0)} m จงหาความเร็ว vᵧ ณ ตำแหน่งนั้น`,
+      text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น ${hasRandomBase ? `uᵧ = ${baseValue} + ${n} = ` : ""}+${u.toFixed(0)} m/s ขณะลูกบอลกำลังตกกลับลงมาและอยู่สูงจากจุดปล่อย ${sText} m จงหาความเร็ว vᵧ ณ ตำแหน่งนั้น`,
       answer: v,
       unit: "m/s",
       target: "vᵧ",
-      known: `uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${s.toFixed(0)} m, g = −9.8 m/s² และ “กำลังตกลง”`,
+      known: `uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${sText} m, g = −9.8 m/s² และ “กำลังตกลง”`,
       formula: `vᵧ² = uᵧ² + 2gSᵧ`,
-      substitution: `vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${s.toFixed(0)}) = ${radicand.toFixed(2)} ⇒ |vᵧ| = ${fmt(vMag)} m/s และเพราะกำลังตกลง จึง vᵧ = −${fmt(vMag)} m/s`
+      substitution: `vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)} ⇒ |vᵧ| = ${fmt(vMag)} m/s และเพราะกำลังตกลง จึง vᵧ = −${fmt(vMag)} m/s`
     };
   }
 
-  function makeQ2(studentNo) {
+  function makeQ2(studentNo, baseU = 30) {
     const n = clampStudentNo(studentNo);
-    const u = 30 + n;
+    const u = baseU + n;
     const tTop = u / 9.8;
     const hMax = (u * u) / (2 * 9.8);
-    return { n, u, tTop, hMax };
+    return { n, baseU, u, tTop, hMax };
   }
 
   /* Theme management */
@@ -187,6 +201,7 @@
     clampStudentNo,
     pickRandom,
     randomFamily,
+    randomInt,
     fmt,
     signed,
     signOf,

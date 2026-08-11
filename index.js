@@ -10,6 +10,7 @@
     TOL,
     clampStudentNo,
     pickRandom,
+    randomInt,
     fmt,
     signed,
     signOf,
@@ -60,7 +61,7 @@
   function generateQ1() {
     const n = getGlobalStudentNo();
     const familyId = pickRandom([1, 2, 3, 4]);
-    currentQ1 = makeQ1(n, familyId);
+    currentQ1 = makeQ1(n, familyId, randomInt(1, 99));
     resetQ1UI();
     $("q1Family").textContent = currentQ1.familyName;
     $("q1Text").innerHTML = currentQ1.text;
@@ -141,9 +142,9 @@
 
   function buildQ2() {
     const n = getGlobalStudentNo();
-    currentQ2 = makeQ2(n);
+    currentQ2 = makeQ2(n, randomInt(1, 99));
     resetQ2UI();
-    $("q2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งจากจุดปล่อยด้วยความเร็วต้น <b>uᵧ = 30 + ${n} = +${currentQ2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
+    $("q2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งจากจุดปล่อยด้วยความเร็วต้น <b>uᵧ = ${currentQ2.baseU} + ${n} = +${currentQ2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
     renderMathIfAvailable();
   }
 
