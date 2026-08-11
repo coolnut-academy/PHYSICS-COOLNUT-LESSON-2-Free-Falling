@@ -102,7 +102,7 @@
           <div class="answer-grid">
             <div class="field">
               <label for="examQ1Sign">เครื่องหมาย</label>
-              <select id="examQ1Sign">
+              <select id="examQ1Sign" disabled>
                 <option value="">เลือก</option>
                 <option value="+">+</option>
                 <option value="-">−</option>
@@ -110,11 +110,11 @@
             </div>
             <div class="field">
               <label for="examQ1Value">ค่าตัวเลข (ขนาด)</label>
-              <input id="examQ1Value" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+              <input id="examQ1Value" type="number" min="0" step="0.01" autocomplete="off" placeholder="ทศนิยม 2 ตำแหน่ง" disabled />
             </div>
             <div class="field">
               <label for="examQ1Unit">หน่วย</label>
-              <select id="examQ1Unit">
+              <select id="examQ1Unit" disabled>
                 <option value="">เลือกหน่วย</option>
                 <option value="m">m</option>
                 <option value="m/s">m/s</option>
@@ -137,11 +137,11 @@
           <div class="answer-grid two">
             <div class="field">
               <label for="examQ2Time">คำตอบ</label>
-              <input id="examQ2Time" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+              <input id="examQ2Time" type="number" min="0" step="0.01" autocomplete="off" placeholder="ทศนิยม 2 ตำแหน่ง" disabled />
             </div>
             <div class="field">
               <label for="examQ2TimeUnit">หน่วย</label>
-              <select id="examQ2TimeUnit">
+              <select id="examQ2TimeUnit" disabled>
                 <option value="">เลือกหน่วย</option>
                 <option value="s">s</option>
                 <option value="m">m</option>
@@ -156,11 +156,11 @@
           <div class="answer-grid two">
             <div class="field">
               <label for="examQ2Height">คำตอบ</label>
-              <input id="examQ2Height" type="number" min="0" step="0.01" placeholder="ทศนิยม 2 ตำแหน่ง" />
+              <input id="examQ2Height" type="number" min="0" step="0.01" autocomplete="off" placeholder="ทศนิยม 2 ตำแหน่ง" disabled />
             </div>
             <div class="field">
               <label for="examQ2HeightUnit">หน่วย</label>
-              <select id="examQ2HeightUnit">
+              <select id="examQ2HeightUnit" disabled>
                 <option value="">เลือกหน่วย</option>
                 <option value="m">m</option>
                 <option value="s">s</option>
@@ -177,7 +177,7 @@
             <div class="muted">เมื่อหมดเวลา ระบบจะส่งอัตโนมัติ</div>
             <div id="submitError" class="error"></div>
           </div>
-          <button class="btn btn-primary" id="submitExam">ส่งข้อสอบ</button>
+          <button class="btn btn-primary" id="submitExam" disabled>ส่งข้อสอบ</button>
         </div>
       </div>
     </section>
@@ -188,6 +188,11 @@
           <div class="eyebrow" style="color:#a9c6ff">Exam Result</div>
           <div class="score-number"><span id="finalScore">0.00</span><small> / 5.00</small></div>
           <div id="resultStudent" style="margin-top:8px;color:rgba(255,255,255,.8)"></div>
+          <div class="result-meta-grid">
+            <div class="result-meta"><span>คะแนนที่ได้</span><b id="resultScoreSummary">0.00 / 5.00</b></div>
+            <div class="result-meta"><span>ทำเสร็จเมื่อ</span><b id="resultFinishedAt">-</b></div>
+            <div class="result-meta"><span>เวลาที่ใช้</span><b id="resultElapsed">00:00</b></div>
+          </div>
           <div class="breakdown">
             <div class="break"><b id="breakQ1">0.00 / 2.00</b><span>ข้อ 1</span></div>
             <div class="break"><b id="breakQ21">0.00 / 1.50</b><span>ข้อ 2.1</span></div>
@@ -199,12 +204,12 @@
           <div class="card">
             <h3>ข้อ 1 · Random Equation</h3>
             <div id="resultQ1"></div>
-            <div class="solution" id="solutionQ1"></div>
+            <div class="solution show" id="solutionQ1"></div>
           </div>
           <div class="card">
             <h3>ข้อ 2 · Highest Point</h3>
             <div id="resultQ2"></div>
-            <div class="solution" id="solutionQ2"></div>
+            <div class="solution show" id="solutionQ2"></div>
           </div>
         </div>
 

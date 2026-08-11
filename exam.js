@@ -7,11 +7,10 @@
   "use strict";
 
   const {
-    G,
-    TOL,
     clampStudentNo,
     randomFamily,
     randomInt,
+    withinTolerance,
     fmt,
     signOf,
     signed,
@@ -29,6 +28,38 @@
   let submitted = false;
 
   const $ = (id) => document.getElementById(id);
+  const ANSWER_FIELD_IDS = [
+    "examQ1Sign",
+    "examQ1Value",
+    "examQ1Unit",
+    "examQ2Time",
+    "examQ2TimeUnit",
+    "examQ2Height",
+    "examQ2HeightUnit"
+  ];
+
+  function setExamControlsDisabled(disabled) {
+    ANSWER_FIELD_IDS.forEach(id => {
+      const field = $(id);
+      if (field) field.disabled = disabled;
+    });
+    if ($("submitExam")) $("submitExam").disabled = disabled;
+  }
+
+  function formatElapsed(ms) {
+    const maxSeconds = Math.floor(DURATION_MS / 1000);
+    const totalSeconds = Math.min(maxSeconds, Math.max(0, Math.ceil(ms / 1000)));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  function formatFinishedAt(timestamp) {
+    return new Date(timestamp).toLocaleString("th-TH", {
+      dateStyle: "medium",
+      timeStyle: "medium"
+    });
+  }
 
   function parseStudentNo(val) {
     const n = Number.parseInt(val, 10);
@@ -103,14 +134,14 @@
     $("examQ1Text").textContent = q1.text;
     $("examQ2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งด้วยความเร็วต้น <b>uᵧ = ${exam.q2Base} + ${exam.studentNo} = +${q2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
 
+    setExamControlsDisabled(false);
     restoreDraft(exam.draft);
     attachDraftListeners();
     startTimer();
   }
 
   function attachDraftListeners() {
-    const fields = ["examQ1Sign", "examQ1Value", "examQ1Unit", "examQ2Time", "examQ2TimeUnit", "examQ2Height", "examQ2HeightUnit"];
-    fields.forEach(id => {
+    ANSWER_FIELD_IDS.forEach(id => {
       const el = $(id);
       if (el) {
         el.removeEventListener("input", saveSession);
@@ -179,7 +210,7 @@
 
   function gradeQ1(q1, draft) {
     const v = Number(draft.q1Value);
-    const magOk = draft.q1Value !== "" && Number.isFinite(v) && Math.abs(Math.abs(v) - Math.abs(q1.answer)) <= TOL;
+    const magOk = draft.q1Value !== "" && withinTolerance(Math.abs(v), Math.abs(q1.answer));
     const signOk = draft.q1Sign === signOf(q1.answer);
     const unitOk = draft.q1Unit === q1.unit;
     const score = (magOk ? 1 : 0) + (signOk ? .5 : 0) + (unitOk ? .5 : 0);
@@ -189,9 +220,9 @@
   function gradeQ2(q2, draft) {
     const t = Number(draft.q2Time);
     const h = Number(draft.q2Height);
-    const timeOk = draft.q2Time !== "" && Number.isFinite(t) && Math.abs(t - q2.tTop) <= TOL;
+    const timeOk = draft.q2Time !== "" && withinTolerance(t, q2.tTop);
     const timeUnitOk = draft.q2TimeUnit === "s";
-    const heightOk = draft.q2Height !== "" && Number.isFinite(h) && Math.abs(h - q2.hMax) <= TOL;
+    const heightOk = draft.q2Height !== "" && withinTolerance(h, q2.hMax);
     const heightUnitOk = draft.q2HeightUnit === "m";
     const score21 = (timeOk ? 1 : 0) + (timeUnitOk ? .5 : 0);
     const score22 = (heightOk ? 1 : 0) + (heightUnitOk ? .5 : 0);
@@ -292,6 +323,10 @@
     if (!exam || submitted) return;
     const submitError = $("submitError");
     if (submitError) submitError.textContent = "";
+    const now = Date.now();
+
+    // A click racing with the final timer tick must still be treated as a timeout.
+    if (!force && now >= exam.deadline) force = true;
 
     if (!force && !allAnswered()) {
       if (submitError) submitError.textContent = "ยังตอบไม่ครบ กรุณาตรวจเครื่องหมาย ค่าตัวเลข และหน่วยทุกช่อง";
@@ -300,7 +335,13 @@
 
     submitted = true;
     if (timerId) clearInterval(timerId);
+    const finishedAtMs = force ? exam.deadline : now;
+    const startedAtMs = Number.isFinite(exam.startedAt) ? exam.startedAt : exam.deadline - DURATION_MS;
+    const elapsedMs = Math.min(DURATION_MS, Math.max(0, finishedAtMs - startedAtMs));
+    const finishedAt = formatFinishedAt(finishedAtMs);
+    const elapsed = formatElapsed(elapsedMs);
     const draft = currentDraft();
+    setExamControlsDisabled(true);
     const q1 = makeQ1(exam.studentNo, exam.familyId, exam.q1Base);
     const q2 = makeQ2(exam.studentNo, exam.q2Base);
     const g1 = gradeQ1(q1, draft);
@@ -317,6 +358,9 @@
     animateScore(total);
 
     $("resultStudent").textContent = `${exam.name} · ${exam.className} · เลขที่ ${exam.studentNo}${force ? " · ส่งอัตโนมัติเมื่อหมดเวลา" : ""}`;
+    $("resultScoreSummary").textContent = `${total.toFixed(2)} / 5.00`;
+    $("resultFinishedAt").textContent = finishedAt;
+    $("resultElapsed").textContent = elapsed;
     $("breakQ1").textContent = `${g1.score.toFixed(2)} / 2.00`;
     $("breakQ21").textContent = `${g2.score21.toFixed(2)} / 1.50`;
     $("breakQ22").textContent = `${g2.score22.toFixed(2)} / 1.50`;
@@ -332,10 +376,11 @@
     `;
 
     $("solutionQ1").innerHTML = `
-      <b>วิธีทำ</b><br>
-      ${q1.known}<br>
-      ใช้ ${q1.formula}<br>
-      ${q1.substitution}
+      <b>วิธีทำทีละขั้น</b>
+      <ol class="solution-steps">
+        ${q1.solutionSteps.map(step => `<li>${step}</li>`).join("")}
+      </ol>
+      <div class="final-answer"><b>ตอบ ${q1.target} = ${signed(q1.answer)} ${unitText(q1.unit)}</b></div>
     `;
 
     $("resultQ2").innerHTML = `
@@ -352,10 +397,17 @@
     `;
 
     $("solutionQ2").innerHTML = `
-      <b>วิธีทำ</b><br>
-      uᵧ = +${q2.u} m/s, vᵧ = 0 m/s, g = −9.8 m/s²<br><br>
-      1) 0 = ${q2.u} + (−9.8)t ⇒ t = ${q2.u}/9.8 = <b>${fmt(q2.tTop)} s</b><br><br>
-      2) 0² = (${q2.u})² + 2(−9.8)Sᵧ ⇒ Sᵧ = (${q2.u})²/19.6 = <b>${fmt(q2.hMax)} m</b>
+      <b>วิธีทำทีละขั้น</b>
+      <ol class="solution-steps">
+        <li>คำนวณความเร็วต้น: uᵧ = ${q2.baseU} + ${q2.n} = +${q2.u} m/s</li>
+        <li>กำหนดแกน +y ชี้ขึ้น จึงมี uᵧ = +${q2.u} m/s และ g = −9.8 m/s²</li>
+        <li>ที่จุดสูงสุด ความเร็วเป็น vᵧ = 0 m/s</li>
+        <li>หาเวลาโดยใช้ vᵧ = uᵧ + gt<br>0 = ${q2.u} + (−9.8)t ⇒ t = ${q2.u}/9.8 = ${fmt(q2.tTop)} s</li>
+        <li>หาความสูงโดยใช้ vᵧ² = uᵧ² + 2gSᵧ<br>0² = (${q2.u})² + 2(−9.8)Sᵧ ⇒ Sᵧ = ${q2.u * q2.u}/19.6 = ${fmt(q2.hMax)} m</li>
+      </ol>
+      <div class="final-answer">
+        <b>ตอบ เวลาไปถึงจุดสูงสุด = ${fmt(q2.tTop)} s<br>ความสูงสูงสุดจากจุดปล่อย = ${fmt(q2.hMax)} m</b>
+      </div>
     `;
 
     if (total >= 4.99) {
@@ -373,7 +425,11 @@
       q1: Number(g1.score.toFixed(2)),
       q21: Number(g2.score21.toFixed(2)),
       q22: Number(g2.score22.toFixed(2)),
-      submittedAt: new Date().toLocaleTimeString("th-TH", { hour: "2-digit", minute: "2-digit" }),
+      startedAtMs,
+      finishedAtMs,
+      elapsedMs,
+      submittedAt: finishedAt,
+      finishedAt,
       timedOut: force
     };
 
@@ -411,13 +467,16 @@
               <th>ข้อ 1</th>
               <th>ข้อ 2.1</th>
               <th>ข้อ 2.2</th>
-              <th>เวลาส่ง</th>
+              <th>เวลาที่ใช้</th>
+              <th>ทำเสร็จเมื่อ</th>
             </tr>
           </thead>
           <tbody>
       `;
 
       history.forEach(item => {
+        const elapsed = Number.isFinite(item.elapsedMs) ? formatElapsed(item.elapsedMs) : "-";
+        const finishedAt = item.finishedAt || item.submittedAt || "-";
         html += `
           <tr>
             <td><b>${item.name}</b></td>
@@ -426,7 +485,8 @@
             <td>${item.q1.toFixed(2)}</td>
             <td>${item.q21.toFixed(2)}</td>
             <td>${item.q22.toFixed(2)}</td>
-            <td><small class="muted">${item.submittedAt} ${item.timedOut ? "(หมดเวลา)" : ""}</small></td>
+            <td>${elapsed}</td>
+            <td><small class="muted">${finishedAt} ${item.timedOut ? "(หมดเวลา)" : ""}</small></td>
           </tr>
         `;
       });
@@ -471,6 +531,6 @@
     if ($("printResult")) $("printResult").addEventListener("click", () => window.print());
 
     renderHistoryTable();
-    restoreExistingSession();
+    if (!restoreExistingSession()) setExamControlsDisabled(true);
   });
 })();

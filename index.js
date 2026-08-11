@@ -7,10 +7,10 @@
   "use strict";
 
   const {
-    TOL,
     clampStudentNo,
     pickRandom,
     randomInt,
+    withinTolerance,
     fmt,
     signed,
     signOf,
@@ -74,7 +74,7 @@
     const selectedSign = $("q1Sign").value;
     const selectedUnit = $("q1Unit").value;
     const hasValue = $("q1Value").value.trim() !== "" && Number.isFinite(rawValue);
-    const magCorrect = hasValue && Math.abs(Math.abs(rawValue) - Math.abs(currentQ1.answer)) <= TOL;
+    const magCorrect = hasValue && withinTolerance(Math.abs(rawValue), Math.abs(currentQ1.answer));
     const signCorrect = selectedSign === signOf(currentQ1.answer);
     const unitCorrect = selectedUnit === currentQ1.unit;
 
@@ -153,9 +153,9 @@
 
     const time = Number($("q2Time").value);
     const height = Number($("q2Height").value);
-    const timeOk = $("q2Time").value.trim() !== "" && Number.isFinite(time) && Math.abs(time - currentQ2.tTop) <= TOL;
+    const timeOk = $("q2Time").value.trim() !== "" && withinTolerance(time, currentQ2.tTop);
     const timeUnitOk = $("q2TimeUnit").value === "s";
-    const heightOk = $("q2Height").value.trim() !== "" && Number.isFinite(height) && Math.abs(height - currentQ2.hMax) <= TOL;
+    const heightOk = $("q2Height").value.trim() !== "" && withinTolerance(height, currentQ2.hMax);
     const heightUnitOk = $("q2HeightUnit").value === "m";
 
     const score = (timeOk ? 1 : 0) + (timeUnitOk ? 0.5 : 0) + (heightOk ? 1 : 0) + (heightUnitOk ? 0.5 : 0);

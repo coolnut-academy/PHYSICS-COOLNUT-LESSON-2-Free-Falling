@@ -32,7 +32,22 @@
   function randomInt(min, max) {
     const low = Math.ceil(min);
     const high = Math.floor(max);
-    return Math.floor(Math.random() * (high - low + 1)) + low;
+    const range = high - low + 1;
+    if (window.crypto && crypto.getRandomValues) {
+      const values = new Uint32Array(1);
+      const limit = Math.floor(0x100000000 / range) * range;
+      do {
+        crypto.getRandomValues(values);
+      } while (values[0] >= limit);
+      return low + (values[0] % range);
+    }
+    return Math.floor(Math.random() * range) + low;
+  }
+
+  function withinTolerance(actual, expected, tolerance = TOL) {
+    if (!Number.isFinite(actual) || !Number.isFinite(expected)) return false;
+    const displayedExpected = Number(expected.toFixed(2));
+    return Math.abs(actual - displayedExpected) <= tolerance + 1e-9;
   }
 
   function fmt(n) {
@@ -59,6 +74,8 @@
     if (familyId === 1) {
       const u = hasRandomBase ? baseValue + n : 24 + (n % 8);
       const t = 1 + (n % 2);
+      const velocityTerm = u * t;
+      const gravityTerm = 0.5 * G * t * t;
       const s = u * t + 0.5 * G * t * t;
       return {
         familyId,
@@ -70,13 +87,24 @@
         target: "Sᵧ",
         known: `uᵧ = +${u.toFixed(0)} m/s, t = ${t} s, g = −9.8 m/s²`,
         formula: `Sᵧ = uᵧt + ½gt²`,
-        substitution: `Sᵧ = (${u.toFixed(0)})(${t}) + ½(−9.8)(${t})² = ${signed(s)} m`
+        substitution: `Sᵧ = (${u.toFixed(0)})(${t}) + ½(−9.8)(${t})² = ${signed(s)} m`,
+        solutionSteps: [
+          hasRandomBase
+            ? `คำนวณความเร็วต้น: uᵧ = ${baseValue} + ${n} = +${u.toFixed(0)} m/s`
+            : `กำหนดความเร็วต้น uᵧ = +${u.toFixed(0)} m/s`,
+          `กำหนดแกน +y ชี้ขึ้น จึงมี uᵧ = +${u.toFixed(0)} m/s, t = ${t} s และ g = −9.8 m/s²`,
+          `เลือกใช้สมการ Sᵧ = uᵧt + ½gt²`,
+          `แทนค่า Sᵧ = (${u.toFixed(0)})(${t}) + ½(−9.8)(${t})²`,
+          `คำนวณ uᵧt = ${fmt(velocityTerm)} m และ ½gt² = ${signed(gravityTerm)} m จึงได้ Sᵧ = ${signed(s)} m`
+        ]
       };
     }
 
     if (familyId === 2) {
       const v = hasRandomBase ? baseValue + n : 16 + (n % 8);
       const t = 1 + (n % 2);
+      const velocityTerm = v * t;
+      const gravityTerm = -0.5 * G * t * t;
       const s = v * t - 0.5 * G * t * t;
       return {
         familyId,
@@ -88,13 +116,24 @@
         target: "Sᵧ",
         known: `vᵧ = +${v.toFixed(0)} m/s, t = ${t} s, g = −9.8 m/s²`,
         formula: `Sᵧ = vᵧt − ½gt²`,
-        substitution: `Sᵧ = (${v.toFixed(0)})(${t}) − ½(−9.8)(${t})² = ${signed(s)} m`
+        substitution: `Sᵧ = (${v.toFixed(0)})(${t}) − ½(−9.8)(${t})² = ${signed(s)} m`,
+        solutionSteps: [
+          hasRandomBase
+            ? `คำนวณความเร็วปลาย: vᵧ = ${baseValue} + ${n} = +${v.toFixed(0)} m/s`
+            : `กำหนดความเร็วปลาย vᵧ = +${v.toFixed(0)} m/s`,
+          `กำหนดแกน +y ชี้ขึ้น จึงมี vᵧ = +${v.toFixed(0)} m/s, t = ${t} s และ g = −9.8 m/s²`,
+          `เลือกใช้สมการ Sᵧ = vᵧt − ½gt²`,
+          `แทนค่า Sᵧ = (${v.toFixed(0)})(${t}) − ½(−9.8)(${t})²`,
+          `คำนวณ vᵧt = ${fmt(velocityTerm)} m และ −½gt² = ${signed(gravityTerm)} m จึงได้ Sᵧ = ${signed(s)} m`
+        ]
       };
     }
 
     if (familyId === 3) {
       const u = hasRandomBase ? baseValue + n : 22 + (n % 8);
-      const t = 4 + (n % 2);
+      let t = 4 + (n % 2);
+      if (Math.abs(u + G * t) < 1e-12) t = 4;
+      const gravityChange = G * t;
       const v = u + G * t;
       return {
         familyId,
@@ -106,7 +145,16 @@
         target: "vᵧ",
         known: `uᵧ = +${u.toFixed(0)} m/s, t = ${t} s, g = −9.8 m/s²`,
         formula: `vᵧ = uᵧ + gt`,
-        substitution: `vᵧ = ${u.toFixed(0)} + (−9.8)(${t}) = ${signed(v)} m/s`
+        substitution: `vᵧ = ${u.toFixed(0)} + (−9.8)(${t}) = ${signed(v)} m/s`,
+        solutionSteps: [
+          hasRandomBase
+            ? `คำนวณความเร็วต้น: uᵧ = ${baseValue} + ${n} = +${u.toFixed(0)} m/s`
+            : `กำหนดความเร็วต้น uᵧ = +${u.toFixed(0)} m/s`,
+          `กำหนดแกน +y ชี้ขึ้น จึงมี uᵧ = +${u.toFixed(0)} m/s, t = ${t} s และ g = −9.8 m/s²`,
+          `เลือกใช้สมการ vᵧ = uᵧ + gt`,
+          `แทนค่า vᵧ = ${u.toFixed(0)} + (−9.8)(${t})`,
+          `คำนวณ gt = ${signed(gravityChange)} m/s จึงได้ vᵧ = ${signed(v)} m/s`
+        ]
       };
     }
 
@@ -128,7 +176,16 @@
       target: "vᵧ",
       known: `uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${sText} m, g = −9.8 m/s² และ “กำลังตกลง”`,
       formula: `vᵧ² = uᵧ² + 2gSᵧ`,
-      substitution: `vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)} ⇒ |vᵧ| = ${fmt(vMag)} m/s และเพราะกำลังตกลง จึง vᵧ = −${fmt(vMag)} m/s`
+      substitution: `vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)} ⇒ |vᵧ| = ${fmt(vMag)} m/s และเพราะกำลังตกลง จึง vᵧ = −${fmt(vMag)} m/s`,
+      solutionSteps: [
+        hasRandomBase
+          ? `คำนวณความเร็วต้น: uᵧ = ${baseValue} + ${n} = +${u.toFixed(0)} m/s`
+          : `กำหนดความเร็วต้น uᵧ = +${u.toFixed(0)} m/s`,
+        `กำหนดแกน +y ชี้ขึ้น จึงมี uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${sText} m และ g = −9.8 m/s²`,
+        `เลือกใช้สมการ vᵧ² = uᵧ² + 2gSᵧ`,
+        `แทนค่า vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)}`,
+        `ถอดรากได้ |vᵧ| = √${radicand.toFixed(2)} = ${fmt(vMag)} m/s แต่โจทย์ระบุว่าลูกบอลกำลังตกลง จึงเลือก vᵧ = −${fmt(vMag)} m/s`
+      ]
     };
   }
 
@@ -202,6 +259,7 @@
     pickRandom,
     randomFamily,
     randomInt,
+    withinTolerance,
     fmt,
     signed,
     signOf,
