@@ -54,11 +54,16 @@
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
   }
 
-  function formatFinishedAt(timestamp) {
-    return new Date(timestamp).toLocaleString("th-TH", {
+  function formatDateTime(timestamp) {
+    if (!timestamp || !Number.isFinite(Number(timestamp))) return "-";
+    return new Date(Number(timestamp)).toLocaleString("th-TH", {
       dateStyle: "medium",
       timeStyle: "medium"
     });
+  }
+
+  function formatFinishedAt(timestamp) {
+    return formatDateTime(timestamp);
   }
 
   function parseStudentNo(val) {
@@ -131,6 +136,10 @@
     $("metaName").textContent = exam.name;
     $("metaClass").textContent = `ชั้น ${exam.className}`;
     $("metaNo").textContent = `เลขที่ ${exam.studentNo}`;
+    const startedAtMs = Number.isFinite(exam.startedAt) ? exam.startedAt : Date.now();
+    if ($("metaStartedAt")) {
+      $("metaStartedAt").textContent = `เริ่มสอบ: ${formatDateTime(startedAtMs)}`;
+    }
     $("examQ1Text").textContent = q1.text;
     $("examQ2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งด้วยความเร็วต้น <b>uᵧ = ${exam.q2Base} + ${exam.studentNo} = +${q2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
 
@@ -338,7 +347,8 @@
     const finishedAtMs = force ? exam.deadline : now;
     const startedAtMs = Number.isFinite(exam.startedAt) ? exam.startedAt : exam.deadline - DURATION_MS;
     const elapsedMs = Math.min(DURATION_MS, Math.max(0, finishedAtMs - startedAtMs));
-    const finishedAt = formatFinishedAt(finishedAtMs);
+    const startedAt = formatDateTime(startedAtMs);
+    const finishedAt = formatDateTime(finishedAtMs);
     const elapsed = formatElapsed(elapsedMs);
     const draft = currentDraft();
     setExamControlsDisabled(true);
@@ -359,6 +369,7 @@
 
     $("resultStudent").textContent = `${exam.name} · ${exam.className} · เลขที่ ${exam.studentNo}${force ? " · ส่งอัตโนมัติเมื่อหมดเวลา" : ""}`;
     $("resultScoreSummary").textContent = `${total.toFixed(2)} / 5.00`;
+    if ($("resultStartedAt")) $("resultStartedAt").textContent = startedAt;
     $("resultFinishedAt").textContent = finishedAt;
     $("resultElapsed").textContent = elapsed;
     $("breakQ1").textContent = `${g1.score.toFixed(2)} / 2.00`;
@@ -427,9 +438,10 @@
       q22: Number(g2.score22.toFixed(2)),
       startedAtMs,
       finishedAtMs,
-      elapsedMs,
-      submittedAt: finishedAt,
+      startedAt,
       finishedAt,
+      submittedAt: finishedAt,
+      elapsedMs,
       timedOut: force
     };
 
@@ -468,6 +480,7 @@
               <th>ข้อ 2.1</th>
               <th>ข้อ 2.2</th>
               <th>เวลาที่ใช้</th>
+              <th>เริ่มสอบเมื่อ</th>
               <th>ทำเสร็จเมื่อ</th>
             </tr>
           </thead>
@@ -476,6 +489,7 @@
 
       history.forEach(item => {
         const elapsed = Number.isFinite(item.elapsedMs) ? formatElapsed(item.elapsedMs) : "-";
+        const startedAt = item.startedAt || (Number.isFinite(item.startedAtMs) ? formatDateTime(item.startedAtMs) : "-");
         const finishedAt = item.finishedAt || item.submittedAt || "-";
         html += `
           <tr>
@@ -486,6 +500,7 @@
             <td>${item.q21.toFixed(2)}</td>
             <td>${item.q22.toFixed(2)}</td>
             <td>${elapsed}</td>
+            <td><small class="muted">${startedAt}</small></td>
             <td><small class="muted">${finishedAt} ${item.timedOut ? "(หมดเวลา)" : ""}</small></td>
           </tr>
         `;
