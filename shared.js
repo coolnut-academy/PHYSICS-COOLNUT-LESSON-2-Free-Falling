@@ -165,18 +165,18 @@
     const sText = hasRandomBase ? s.toFixed(2) : s.toFixed(0);
     const radicand = u * u + 2 * G * s;
     const vMag = Math.sqrt(radicand);
-    const v = -vMag; // กำลังตกกลับลงมา
+    const v = vMag; // กำลังเคลื่อนที่ขึ้น (ขาขึ้น)
     return {
       familyId: 4,
       baseValue: hasRandomBase ? baseValue : null,
       familyName: "สมการ 4 · vᵧ² = uᵧ² + 2gSᵧ",
-      text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น ${hasRandomBase ? `uᵧ = ${baseValue} + ${n} = ` : ""}+${u.toFixed(0)} m/s ขณะลูกบอลกำลังตกกลับลงมาและอยู่สูงจากจุดปล่อย ${sText} m จงหาความเร็ว vᵧ ณ ตำแหน่งนั้น`,
+      text: `โยนลูกบอลขึ้นในแนวดิ่งด้วยความเร็วต้น ${hasRandomBase ? `uᵧ = ${baseValue} + ${n} = ` : ""}+${u.toFixed(0)} m/s ขณะลูกบอลกำลังเคลื่อนที่ขึ้นและอยู่สูงจากจุดปล่อย ${sText} m จงหาความเร็ว vᵧ ณ ตำแหน่งนั้น`,
       answer: v,
       unit: "m/s",
       target: "vᵧ",
-      known: `uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${sText} m, g = −9.8 m/s² และ “กำลังตกลง”`,
+      known: `uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${sText} m, g = −9.8 m/s² และ “กำลังเคลื่อนที่ขึ้น”`,
       formula: `vᵧ² = uᵧ² + 2gSᵧ`,
-      substitution: `vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)} ⇒ |vᵧ| = ${fmt(vMag)} m/s และเพราะกำลังตกลง จึง vᵧ = −${fmt(vMag)} m/s`,
+      substitution: `vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)} ⇒ vᵧ = +${fmt(vMag)} m/s (เนื่องจากลูกบอลกำลังเคลื่อนที่ขึ้น)`,
       solutionSteps: [
         hasRandomBase
           ? `คำนวณความเร็วต้น: uᵧ = ${baseValue} + ${n} = +${u.toFixed(0)} m/s`
@@ -184,7 +184,7 @@
         `กำหนดแกน +y ชี้ขึ้น จึงมี uᵧ = +${u.toFixed(0)} m/s, Sᵧ = +${sText} m และ g = −9.8 m/s²`,
         `เลือกใช้สมการ vᵧ² = uᵧ² + 2gSᵧ`,
         `แทนค่า vᵧ² = (${u.toFixed(0)})² + 2(−9.8)(${sText}) = ${radicand.toFixed(2)}`,
-        `ถอดรากได้ |vᵧ| = √${radicand.toFixed(2)} = ${fmt(vMag)} m/s แต่โจทย์ระบุว่าลูกบอลกำลังตกลง จึงเลือก vᵧ = −${fmt(vMag)} m/s`
+        `ถอดรากได้ vᵧ = +√${radicand.toFixed(2)} = +${fmt(vMag)} m/s (เลือกค่าบวกเนื่องจากลูกบอลกำลังเคลื่อนที่ขึ้น)`
       ]
     };
   }
