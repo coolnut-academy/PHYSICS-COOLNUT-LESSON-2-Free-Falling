@@ -114,12 +114,13 @@
     if (!currentQ1) return;
     const box = $("solutionBoxQ1");
     box.className = "solution show";
+    const stepsHtml = currentQ1.solutionSteps
+      ? `<ol class="solution-steps">${currentQ1.solutionSteps.map(s => `<li>${s}</li>`).join("")}</ol>`
+      : `1) ${currentQ1.known}<br>2) ใช้ <span class="eq">${currentQ1.formula}</span><br>3) ${currentQ1.substitution}<br>`;
     box.innerHTML = `
-      <b>เฉลย</b><br>
-      1) ${currentQ1.known}<br>
-      2) ใช้ <span class="eq">${currentQ1.formula}</span><br>
-      3) ${currentQ1.substitution}<br>
-      <b>ตอบ ${currentQ1.target} = ${signed(currentQ1.answer)} ${unitText(currentQ1.unit)}</b>
+      <b>เฉลยวิธีทำทีละขั้น</b>
+      ${stepsHtml}
+      <div class="final-answer" style="margin-top:8px"><b>ตอบ ${currentQ1.target} = ${signed(currentQ1.answer)} ${unitText(currentQ1.unit)}</b></div>
     `;
     renderMathIfAvailable();
   }
@@ -142,7 +143,8 @@
 
   function buildQ2() {
     const n = getGlobalStudentNo();
-    currentQ2 = makeQ2(n, randomInt(1, 99));
+    const baseU = randomInt(10, 60);
+    currentQ2 = makeQ2(n, baseU);
     resetQ2UI();
     $("q2Text").innerHTML = `โยนวัตถุขึ้นในแนวดิ่งจากจุดปล่อยด้วยความเร็วต้น <b>uᵧ = ${currentQ2.baseU} + ${n} = +${currentQ2.u} m/s</b> จงหา (1) เวลาที่ขึ้นถึงจุดสูงสุด และ (2) ความสูงสูงสุดจากจุดปล่อย`;
     renderMathIfAvailable();
@@ -196,21 +198,32 @@
     const box = $("solutionBoxQ2");
     box.className = "solution show";
     box.innerHTML = `
-      <b>เฉลย</b><br>
-      กำหนด uᵧ = +${currentQ2.u} m/s, vᵧ = 0 m/s, g = −9.8 m/s²<br><br>
-      <b>1) เวลาไปถึงจุดสูงสุด</b><br>
-      0 = ${currentQ2.u} + (−9.8)t<br>
-      t = ${currentQ2.u}/9.8 = <b>${fmt(currentQ2.tTop)} s</b><br><br>
-      <b>2) ความสูงสูงสุด</b><br>
-      0² = (${currentQ2.u})² + 2(−9.8)Sᵧ<br>
-      Sᵧ = (${currentQ2.u})²/19.6 = <b>${fmt(currentQ2.hMax)} m</b>
+      <b>เฉลยวิธีทำทีละขั้น</b>
+      <ol class="solution-steps">
+        <li>คำนวณความเร็วต้น: uᵧ = ${currentQ2.baseU} + ${currentQ2.n} = +${currentQ2.u} m/s</li>
+        <li>กำหนดแกน +y ชี้ขึ้น จึงมี uᵧ = +${currentQ2.u} m/s และ g = −9.8 m/s²</li>
+        <li>ที่จุดสูงสุด ความเร็วเป็น vᵧ = 0 m/s</li>
+        <li>หาเวลาโดยใช้ vᵧ = uᵧ + gt<br>0 = ${currentQ2.u} + (−9.8)t ⇒ t = ${currentQ2.u}/9.8 = <b>${fmt(currentQ2.tTop)} s</b></li>
+        <li>หาความสูงโดยใช้ vᵧ² = uᵧ² + 2gSᵧ<br>0² = (${currentQ2.u})² + 2(−9.8)Sᵧ ⇒ Sᵧ = ${currentQ2.u * currentQ2.u}/19.6 = <b>${fmt(currentQ2.hMax)} m</b></li>
+      </ol>
+      <div class="final-answer" style="margin-top:8px">
+        <b>ตอบ (1) เวลาไปถึงจุดสูงสุด = ${fmt(currentQ2.tTop)} s &nbsp;|&nbsp; (2) ความสูงสูงสุด = ${fmt(currentQ2.hMax)} m</b>
+      </div>
     `;
     renderMathIfAvailable();
   }
 
-  function handleStudentNoChange() {
+  function handleStudentNoChange(e) {
     const el = $("studentNoGlobal");
-    if (el) {
+    if (!el) return;
+    const rawVal = el.value.trim();
+    if (e && e.type === "input") {
+      if (rawVal === "") return;
+      const n = Number.parseInt(rawVal, 10);
+      if (!Number.isFinite(n) || n < 1 || n > 99) return;
+      generateQ1();
+      buildQ2();
+    } else {
       const n = clampStudentNo(el.value);
       el.value = n;
       generateQ1();
@@ -227,6 +240,7 @@
     $("checkQ2").addEventListener("click", checkQ2);
     $("hintQ2").addEventListener("click", showQ2Hint);
     $("solutionQ2").addEventListener("click", showQ2Solution);
+    if ($("newQ2")) $("newQ2").addEventListener("click", buildQ2);
 
     const studentNoEl = $("studentNoGlobal");
     if (studentNoEl) {
